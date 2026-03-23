@@ -1,115 +1,127 @@
 'use client'
 
 import { useState } from 'react'
-import ProductGrid from '@/components/product-grid'
+import ProductGrid from '@/components/product/product-grid'
 import { useQuery } from '@tanstack/react-query'
 import { medusaClient } from '@/lib/medusa-client'
+import { SlidersHorizontal, X } from 'lucide-react'
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('')
   const [sortBy, setSortBy] = useState<string>('newest')
+  const [showFilters, setShowFilters] = useState(false)
 
-  // Fetch ALL categories dynamically - NO HARDCODING
   const { data: categories, isLoading: loadingCategories } = useQuery({
     queryKey: ['categories'],
     queryFn: async () => {
-      const response = await medusaClient.store.category.list({
-        limit: 100,
-      })
+      const response = await medusaClient.store.category.list({ limit: 100 })
       return response.product_categories
     },
   })
 
-  // Show all categories (don't filter by parent)
   const allCategories = categories || []
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-gray-900">All Products</h1>
-        <p className="mt-2 text-gray-600">
-          Browse our complete collection
-        </p>
-      </div>
-
-      <div className="grid lg:grid-cols-4 gap-8">
-        {/* Dynamic Filters Sidebar */}
-        <aside className="lg:col-span-1">
-          <div className="sticky top-24 space-y-6">
-            {/* Categories Filter */}
-            <div className="bg-white rounded-lg border p-4">
-              <h3 className="font-semibold mb-3">Categories</h3>
-              {loadingCategories ? (
-                <div className="text-sm text-gray-500">Loading...</div>
-              ) : (
-                <div className="space-y-2">
-                  <label className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded">
-                    <input
-                      type="radio"
-                      name="category"
-                      checked={selectedCategory === ''}
-                      onChange={() => setSelectedCategory('')}
-                      className="mr-2"
-                    />
-                    <span className="text-sm font-medium">All Products</span>
-                  </label>
-
-                  {/* Render all categories dynamically */}
-                  {allCategories.map((category) => (
-                    <label
-                      key={category.id}
-                      className="flex items-center cursor-pointer hover:bg-gray-50 p-2 rounded"
-                    >
-                      <input
-                        type="radio"
-                        name="category"
-                        checked={selectedCategory === category.id}
-                        onChange={() => setSelectedCategory(category.id)}
-                        className="mr-2"
-                      />
-                      <span className="text-sm">{category.name}</span>
-                    </label>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Sort */}
-            <div className="bg-white rounded-lg border p-4">
-              <h3 className="font-semibold mb-3">Sort By</h3>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full border rounded-md px-3 py-2 text-sm"
-              >
-                <option value="newest">Newest First</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="name">Name: A to Z</option>
-              </select>
-            </div>
-
-            {/* Clear Filters */}
-            {selectedCategory && (
-              <button
-                onClick={() => setSelectedCategory('')}
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-900 px-4 py-2 rounded-md text-sm font-semibold transition"
-              >
-                Clear Filters
-              </button>
-            )}
-          </div>
-        </aside>
-
-        {/* Products Grid */}
-        <div className="lg:col-span-3">
-          <ProductGrid
-            limit={100}
-            categoryId={selectedCategory || undefined}
-            sortBy={sortBy}
-          />
+    <>
+      {/* Page Header */}
+      <div className="border-b">
+        <div className="container-custom py-section-sm">
+          <h1 className="text-h1 font-heading font-semibold">Shop All</h1>
+          <p className="mt-2 text-muted-foreground">
+            Browse our complete collection
+          </p>
         </div>
       </div>
-    </div>
+
+      <div className="container-custom py-8">
+        {/* Toolbar */}
+        <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="inline-flex items-center gap-2 text-sm font-medium lg:hidden"
+          >
+            <SlidersHorizontal className="h-4 w-4" />
+            Filters
+          </button>
+
+          <div className="flex items-center gap-3 ml-auto">
+            <label className="text-xs text-muted-foreground uppercase tracking-wide">Sort</label>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="border rounded-sm bg-background px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+            >
+              <option value="newest">Newest</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="name">Name: A to Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div className="grid lg:grid-cols-[220px_1fr] gap-10">
+          {/* Sidebar Filters */}
+          <aside className={`${showFilters ? 'block' : 'hidden'} lg:block`}>
+            <div className="sticky top-24 space-y-8">
+              {/* Categories */}
+              <div>
+                <h3 className="text-xs font-semibold uppercase tracking-widest mb-4">Category</h3>
+                {loadingCategories ? (
+                  <div className="space-y-2">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="h-4 w-24 bg-muted rounded animate-pulse" />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="space-y-1">
+                    <button
+                      onClick={() => setSelectedCategory('')}
+                      className={`block w-full text-left py-1.5 text-sm transition-colors ${
+                        !selectedCategory ? 'font-semibold text-foreground' : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                    >
+                      All Products
+                    </button>
+                    {allCategories.map((category: any) => (
+                      <button
+                        key={category.id}
+                        onClick={() => setSelectedCategory(category.id)}
+                        className={`block w-full text-left py-1.5 text-sm transition-colors ${
+                          selectedCategory === category.id
+                            ? 'font-semibold text-foreground'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {category.name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Active Filter */}
+              {selectedCategory && (
+                <button
+                  onClick={() => setSelectedCategory('')}
+                  className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground border rounded-full px-3 py-1.5 transition-colors"
+                >
+                  Clear filters
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+          </aside>
+
+          {/* Products Grid */}
+          <div>
+            <ProductGrid
+              limit={100}
+              categoryId={selectedCategory || undefined}
+              sortBy={sortBy}
+            />
+          </div>
+        </div>
+      </div>
+    </>
   )
 }

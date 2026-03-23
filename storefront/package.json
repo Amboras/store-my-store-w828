@@ -10,21 +10,28 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@medusajs/js-sdk": "latest",
+    "@tanstack/react-query": "^5.17.19",
+    "framer-motion": "^12.38.0",
+    "lucide-react": "^1.0.1",
     "next": "^15.0.0",
+    "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@medusajs/js-sdk": "latest",
-    "@tanstack/react-query": "^5.17.19"
+    "react-hook-form": "^7.72.0",
+    "sonner": "^2.0.7",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^20.11.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "typescript": "^5.3.3",
-    "tailwindcss": "^3.4.1",
     "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.33",
     "eslint": "^8.56.0",
-    "eslint-config-next": "^15.0.0"
+    "eslint-config-next": "^15.0.0",
+    "postcss": "^8.4.33",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3"
   }
 }

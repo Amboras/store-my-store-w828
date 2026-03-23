@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import { medusaClient } from '@/lib/medusa-client'
-import ProductGrid from '@/components/product-grid'
+import ProductGrid from '@/components/product/product-grid'
 
 async function getCollection(handle: string) {
   try {
@@ -30,21 +30,19 @@ export default async function CollectionPage({
   const hasDescription = typeof description === 'string' && description
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      {/* Collection Header */}
-      <div className="mb-12 text-center">
-        <h1 className="text-5xl font-bold text-gray-900 mb-4">
-          {collection.title}
-        </h1>
-        {hasDescription && (
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            {description}
-          </p>
-        )}
+    <>
+      <div className="border-b">
+        <div className="container-custom py-section-sm text-center">
+          <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">Collection</p>
+          <h1 className="text-h1 font-heading font-semibold">{collection.title}</h1>
+          {hasDescription && (
+            <p className="mt-3 text-muted-foreground max-w-xl mx-auto">{description as string}</p>
+          )}
+        </div>
       </div>
-
-      {/* Products in Collection */}
-      <ProductGrid collectionId={collection.id} limit={100} />
-    </div>
+      <div className="container-custom py-8">
+        <ProductGrid collectionId={collection.id} limit={100} />
+      </div>
+    </>
   )
 }

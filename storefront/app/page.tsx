@@ -1,112 +1,169 @@
 'use client'
 
 import Link from 'next/link'
-import CollectionSection from '@/components/collection-section'
+import Image from 'next/image'
+import { ArrowRight, Truck, Shield, RotateCcw } from 'lucide-react'
+import CollectionSection from '@/components/marketing/collection-section'
 import { useCollections } from '@/hooks/use-collections'
 
 export default function HomePage() {
   const { data: collections, isLoading } = useCollections()
 
   return (
-    <main className="min-h-screen">
+    <>
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white py-20">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            Welcome to Your Store
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            Discover amazing products powered by Medusa - a modern, headless ecommerce platform
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Link
-              href="/products"
-              className="bg-blue-600 text-white px-8 py-3 rounded-md font-semibold hover:bg-blue-700 transition"
-            >
-              Shop Now
-            </Link>
-            <a
-              href="http://localhost:9000/app"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-gray-100 text-gray-900 px-8 py-3 rounded-md font-semibold hover:bg-gray-200 transition"
-            >
-              Admin Dashboard
-            </a>
+      <section className="relative bg-muted/30 overflow-hidden">
+        <div className="container-custom grid lg:grid-cols-2 gap-8 items-center py-section lg:py-32">
+          {/* Text Content */}
+          <div className="space-y-6 animate-fade-in-up">
+            <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
+              New Collection
+            </p>
+            <h1 className="text-display font-heading font-semibold text-balance">
+              Elevate Your Everyday
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-md leading-relaxed">
+              Thoughtfully designed products that bring beauty and function to your daily rituals.
+            </p>
+            <div className="flex flex-wrap gap-4 pt-2">
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 bg-foreground text-background px-8 py-3.5 text-sm font-semibold uppercase tracking-wide hover:opacity-90 transition-opacity"
+              >
+                Shop Now
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 border border-foreground px-8 py-3.5 text-sm font-semibold uppercase tracking-wide hover:bg-foreground hover:text-background transition-colors"
+              >
+                Our Story
+              </Link>
+            </div>
+          </div>
+
+          {/* Hero Image Placeholder */}
+          <div className="relative aspect-[4/5] lg:aspect-[3/4] bg-muted rounded-sm overflow-hidden animate-fade-in">
+            <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30">
+              <div className="text-center">
+                <div className="w-24 h-24 mx-auto border-2 border-dashed border-current rounded-full flex items-center justify-center mb-4">
+                  <span className="text-3xl font-heading">S</span>
+                </div>
+                <p className="text-sm">Hero Image</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Collections Sections */}
+      {/* Collections */}
       {isLoading ? (
-        <section className="py-16">
-          <div className="container mx-auto px-4 text-center">
-            <div className="animate-spin mx-auto h-12 w-12 border-4 border-gray-300 border-t-blue-600 rounded-full"></div>
-            <p className="mt-4 text-gray-600">Loading collections...</p>
+        <section className="py-section">
+          <div className="container-custom">
+            <div className="animate-pulse space-y-4 text-center">
+              <div className="h-3 w-20 bg-muted rounded mx-auto" />
+              <div className="h-8 w-64 bg-muted rounded mx-auto" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="aspect-[3/4] bg-muted rounded animate-pulse" />
+              ))}
+            </div>
           </div>
         </section>
       ) : collections && collections.length > 0 ? (
         <>
-          {collections.map((collection, index) => (
-            <div
+          {collections.map((collection: any, index: number) => (
+            <CollectionSection
               key={collection.id}
-              className={index % 2 === 1 ? 'bg-gray-50' : ''}
-            >
-              <CollectionSection collection={collection} />
-            </div>
+              collection={collection}
+              alternate={index % 2 === 1}
+            />
           ))}
         </>
-      ) : (
-        <section className="py-16">
-          <div className="container mx-auto px-4 text-center">
-            <p className="text-gray-600">No collections available yet.</p>
-            <Link
-              href="/products"
-              className="text-blue-600 hover:text-blue-700 font-semibold mt-4 inline-block"
-            >
-              Browse all products →
-            </Link>
-          </div>
-        </section>
-      )}
+      ) : null}
 
-      {/* Features Section */}
-      <section className="bg-gray-50 py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
-            Why Shop With Us
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+      {/* Editorial / Brand Story Section */}
+      <section className="py-section bg-muted/30">
+        <div className="container-custom">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="aspect-[4/5] bg-muted rounded-sm overflow-hidden relative">
+              <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/30">
+                <p className="text-sm">Lifestyle Image</p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Quality Products</h3>
-              <p className="text-gray-600">Carefully curated selection of high-quality items</p>
             </div>
-            <div className="text-center">
-              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Best Prices</h3>
-              <p className="text-gray-600">Competitive pricing and regular discounts</p>
-            </div>
-            <div className="text-center">
-              <div className="bg-blue-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Fast Shipping</h3>
-              <p className="text-gray-600">Quick and reliable delivery to your door</p>
+            <div className="space-y-6 lg:max-w-md">
+              <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">Our Philosophy</p>
+              <h2 className="text-h2 font-heading font-semibold">
+                Crafted With Intention
+              </h2>
+              <p className="text-muted-foreground leading-relaxed">
+                Every product in our collection is chosen for its quality, design, and the story behind it.
+                We believe in fewer, better things — pieces that last and bring joy to everyday moments.
+              </p>
+              <Link
+                href="/about"
+                className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide link-underline pb-0.5"
+              >
+                Learn More
+                <ArrowRight className="h-4 w-4" />
+              </Link>
             </div>
           </div>
         </div>
       </section>
-    </main>
+
+      {/* Trust / Features Bar */}
+      <section className="py-section-sm border-y">
+        <div className="container-custom">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4">
+            <div className="flex items-center gap-4 justify-center text-center md:text-left md:justify-start">
+              <Truck className="h-6 w-6 flex-shrink-0" strokeWidth={1.5} />
+              <div>
+                <p className="text-sm font-semibold">Free Shipping</p>
+                <p className="text-xs text-muted-foreground">On orders over $75</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 justify-center">
+              <RotateCcw className="h-6 w-6 flex-shrink-0" strokeWidth={1.5} />
+              <div>
+                <p className="text-sm font-semibold">Easy Returns</p>
+                <p className="text-xs text-muted-foreground">30-day return policy</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 justify-center md:justify-end text-center md:text-right">
+              <Shield className="h-6 w-6 flex-shrink-0" strokeWidth={1.5} />
+              <div>
+                <p className="text-sm font-semibold">Secure Checkout</p>
+                <p className="text-xs text-muted-foreground">256-bit SSL encryption</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="py-section">
+        <div className="container-custom max-w-xl text-center">
+          <h2 className="text-h2 font-heading font-semibold">Stay in Touch</h2>
+          <p className="mt-3 text-muted-foreground">
+            Be the first to know about new arrivals, exclusive offers, and more.
+          </p>
+          <form className="mt-8 flex gap-2" onSubmit={(e) => e.preventDefault()}>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 border-b border-foreground/30 bg-transparent px-1 py-3 text-sm placeholder:text-muted-foreground focus:border-foreground focus:outline-none transition-colors"
+            />
+            <button
+              type="submit"
+              className="bg-foreground text-background px-6 py-3 text-sm font-semibold uppercase tracking-wide hover:opacity-90 transition-opacity whitespace-nowrap"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </section>
+    </>
   )
 }
