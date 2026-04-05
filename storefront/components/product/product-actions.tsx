@@ -7,6 +7,7 @@ import { toast } from 'sonner'
 
 interface ProductActionsProps {
   product: any
+  compareAtPrices?: Record<string, number | null>
 }
 
 // Helper: get the value of a specific option from a variant
@@ -31,7 +32,15 @@ function formatVariantPrice(variant: any): string | null {
   }).format(amount / 100)
 }
 
-export default function ProductActions({ product }: ProductActionsProps) {
+// Helper: format a raw cents amount with currency
+function formatAmount(cents: number, currency: string): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: (currency || 'usd').toUpperCase(),
+  }).format(cents / 100)
+}
+
+export default function ProductActions({ product, compareAtPrices }: ProductActionsProps) {
   const variants = product.variants || []
   const options = product.options || []
 
@@ -68,6 +77,15 @@ export default function ProductActions({ product }: ProductActionsProps) {
   }, [variants, selectedOptions])
 
   const formattedPrice = formatVariantPrice(selectedVariant)
+
+  // Compare-at price logic
+  const compareAtPriceCents = selectedVariant?.id ? compareAtPrices?.[selectedVariant.id] : null
+  const currentPriceCents = selectedVariant?.calculated_price?.calculated_amount
+    ?? (typeof selectedVariant?.calculated_price === 'number' ? selectedVariant.calculated_price : null)
+  const currency = selectedVariant?.calculated_price?.currency_code || 'usd'
+  const hasDiscount = compareAtPriceCents != null && currentPriceCents != null && compareAtPriceCents > currentPriceCents
+  const formattedCompareAt = hasDiscount ? formatAmount(compareAtPriceCents, currency) : null
+
   const inventoryQuantity = selectedVariant?.inventory_quantity
   const isOutOfStock = selectedVariant?.manage_inventory && inventoryQuantity != null && inventoryQuantity <= 0
   const isLowStock = selectedVariant?.manage_inventory && inventoryQuantity != null && inventoryQuantity > 0 && inventoryQuantity < 10
@@ -102,9 +120,14 @@ export default function ProductActions({ product }: ProductActionsProps) {
     <div className="space-y-6">
       {/* Price */}
       <div className="flex items-baseline gap-3">
-        <p className="text-xl font-heading font-semibold">
+        <p className={`text-xl font-heading font-semibold ${hasDiscount ? 'text-red-600' : ''}`}>
           {formattedPrice || 'Price not available'}
         </p>
+        {formattedCompareAt && (
+          <p className="text-base text-muted-foreground line-through">
+            {formattedCompareAt}
+          </p>
+        )}
       </div>
 
       {/* Option Selectors */}

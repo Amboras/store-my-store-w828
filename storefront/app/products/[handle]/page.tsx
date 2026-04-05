@@ -25,6 +25,30 @@ async function getProduct(handle: string) {
   }
 }
 
+async function getCompareAtPrices(productId: string): Promise<Record<string, number | null>> {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'
+    const storeId = process.env.NEXT_PUBLIC_STORE_ID
+    const headers: Record<string, string> = {}
+    if (storeId) headers['X-Store-Environment-ID'] = storeId
+
+    const res = await fetch(
+      `${baseUrl}/store/product-extensions/products/${productId}/variants`,
+      { headers, next: { revalidate: 30 } },
+    )
+    if (!res.ok) return {}
+
+    const data = await res.json()
+    const map: Record<string, number | null> = {}
+    for (const v of data.variants || []) {
+      map[v.id] = v.compare_at_price
+    }
+    return map
+  } catch {
+    return {}
+  }
+}
+
 export default async function ProductPage({
   params,
 }: {
@@ -36,6 +60,8 @@ export default async function ProductPage({
   if (!product) {
     notFound()
   }
+
+  const compareAtPrices = await getCompareAtPrices(product.id)
 
   const allImages = [
     ...(product.thumbnail ? [{ url: product.thumbnail }] : []),
@@ -110,7 +136,7 @@ export default async function ProductPage({
             </div>
 
             {/* Variant Selector + Price + Add to Cart (client component) */}
-            <ProductActions product={product} />
+            <ProductActions product={product} compareAtPrices={compareAtPrices} />
 
             {/* Trust Signals */}
             <div className="grid grid-cols-3 gap-4 py-6 border-t">
