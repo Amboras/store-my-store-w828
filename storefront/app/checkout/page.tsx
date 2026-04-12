@@ -17,7 +17,7 @@ import { getProductImage } from '@/lib/utils/placeholder-images'
 import { trackBeginCheckout } from '@/lib/analytics'
 import { trackMetaEvent, toMetaCurrencyValue } from '@/lib/meta-pixel'
 import { formatPrice } from '@/lib/utils/format-price'
-import type { ShippingOption, CartLineItem } from '@/types'
+import type { ShippingOption, CartLineItem, LineItem } from '@/types'
 
 const StripePaymentForm = dynamic(
   () => import('@/components/checkout/stripe-payment-form').then(m => m.StripePaymentForm),
@@ -92,9 +92,9 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (cart?.id && hasItems && !trackedCheckout.current) {
       trackedCheckout.current = true
-      const itemCount = (cart.items || []).reduce((sum: number, item: any) => sum + item.quantity, 0)
-      const contentIds = (cart.items || []).map((item: any) => item.variant_id).filter(Boolean)
-      const contents = (cart.items || []).map((item: any) => ({
+      const itemCount = (cart.items || []).reduce((sum: number, item: LineItem) => sum + item.quantity, 0)
+      const contentIds = (cart.items || []).map((item: LineItem) => item.variant_id).filter(Boolean)
+      const contents = (cart.items || []).map((item: LineItem) => ({
         id: item.variant_id,
         quantity: item.quantity,
         item_price: toMetaCurrencyValue(item.unit_price),

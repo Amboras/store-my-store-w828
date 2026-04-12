@@ -12,7 +12,9 @@ export default function AccountError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('Account error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Account error:', error)
+    }
   }, [error])
 
   return (

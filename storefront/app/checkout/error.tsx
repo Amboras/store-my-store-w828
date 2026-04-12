@@ -12,7 +12,9 @@ export default function CheckoutError({
   reset: () => void
 }) {
   useEffect(() => {
-    console.error('Checkout error:', error)
+    if (process.env.NODE_ENV === 'development') {
+      console.error('Checkout error:', error)
+    }
   }, [error])
 
   return (

@@ -275,6 +275,15 @@ export async function fetchMetaPixelConfig(): Promise<MetaPixelPublicConfig | nu
     throw new Error('Failed to fetch Meta Pixel config')
   }
 
-  const data = (await response.json()) as MetaPixelPublicConfig
-  return data
+  const data = await response.json()
+
+  if (
+    typeof data !== 'object' ||
+    data === null ||
+    (data.pixel_id !== null && typeof data.pixel_id !== 'string')
+  ) {
+    return { store_environment_id: '', pixel_id: null, pixel_enabled: false, data_sharing_level: 'disabled' as const }
+  }
+
+  return data as MetaPixelPublicConfig
 }

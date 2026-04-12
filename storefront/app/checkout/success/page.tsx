@@ -7,6 +7,7 @@ import { Suspense, useEffect, useRef, useState } from 'react'
 import { trackPurchase } from '@/lib/analytics'
 import { medusaClient } from '@/lib/medusa-client'
 import { trackMetaEvent, toMetaCurrencyValue } from '@/lib/meta-pixel'
+import type { Order, OrderItem } from '@/types'
 
 type PurchaseTrackingDetails = {
   value?: number
@@ -20,16 +21,16 @@ type PurchaseTrackingDetails = {
   numItems?: number
 }
 
-function buildPurchaseTrackingDetails(order: any): PurchaseTrackingDetails {
-  const items = Array.isArray(order?.items) ? order.items : []
+function buildPurchaseTrackingDetails(order: Order): PurchaseTrackingDetails {
+  const items: OrderItem[] = Array.isArray(order?.items) ? order.items : []
 
   const contentIds = items
-    .map((item: any) => item.variant_id || item.variant?.id || item.product_id || item.product?.id)
+    .map((item: OrderItem) => item.variant_id || item.variant?.id || item.product_id)
     .filter(Boolean)
 
   const contents = items
-    .map((item: any) => {
-      const id = item.variant_id || item.variant?.id || item.product_id || item.product?.id
+    .map((item: OrderItem) => {
+      const id = item.variant_id || item.variant?.id || item.product_id
 
       if (!id) {
         return null
@@ -52,7 +53,7 @@ function buildPurchaseTrackingDetails(order: any): PurchaseTrackingDetails {
     currency: order?.currency_code,
     contentIds,
     contents: contents.length > 0 ? contents : undefined,
-    numItems: items.reduce((sum: number, item: any) => sum + (item.quantity || 0), 0),
+    numItems: items.reduce((sum: number, item: OrderItem) => sum + (item.quantity || 0), 0),
   }
 }
 

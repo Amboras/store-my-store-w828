@@ -14,6 +14,7 @@ interface ProductVariant {
   manage_inventory?: boolean;
   calculated_price?: {
     calculated_amount?: number;
+    currency_code?: string;
   };
 }
 
@@ -46,7 +47,7 @@ export default function AddToCart({ variant }: AddToCartProps) {
             content_ids: [variant.id],
             content_type: 'product',
             value: metaValue,
-            currency: 'usd',
+            currency: variant.calculated_price?.currency_code || 'usd',
             contents: [{ id: variant.id, quantity, item_price: metaValue }],
             num_items: quantity,
           })
