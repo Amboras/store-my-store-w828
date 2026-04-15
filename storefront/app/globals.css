@@ -4,35 +4,32 @@
 
 @layer base {
   :root {
-    --background: 40 20% 98%;
-    --foreground: 0 0% 10%;
-    --muted: 40 10% 94%;
-    --muted-foreground: 0 0% 45%;
-    --accent: 35 40% 50%;
+    /* Warm cream & sage palette for organic soap brand */
+    --background: 40 30% 97%;
+    --foreground: 30 15% 12%;
+    --muted: 40 20% 92%;
+    --muted-foreground: 30 10% 48%;
+    --accent: 140 22% 36%;        /* sage green */
     --accent-foreground: 0 0% 100%;
-    --border: 40 10% 88%;
-    --ring: 35 40% 50%;
-    --primary: 0 0% 10%;
-    --primary-foreground: 0 0% 98%;
+    --border: 40 15% 86%;
+    --ring: 140 22% 36%;
+    --primary: 30 15% 12%;
+    --primary-foreground: 40 30% 97%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
-
-    /* Brand colors (dynamically injected from Store.metadata.brand) */
-    /* Access in CSS: var(--brand-primary), var(--brand-secondary) */
-    /* Managed by BrandStyleInjector component */
   }
 
   .dark {
-    --background: 0 0% 6%;
-    --foreground: 40 20% 94%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 55%;
-    --accent: 35 45% 55%;
+    --background: 30 10% 8%;
+    --foreground: 40 20% 92%;
+    --muted: 30 8% 14%;
+    --muted-foreground: 40 10% 55%;
+    --accent: 140 22% 46%;
     --accent-foreground: 0 0% 100%;
-    --border: 0 0% 16%;
-    --ring: 35 45% 55%;
-    --primary: 40 20% 94%;
-    --primary-foreground: 0 0% 6%;
+    --border: 30 8% 18%;
+    --ring: 140 22% 46%;
+    --primary: 40 20% 92%;
+    --primary-foreground: 30 10% 8%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 98%;
   }
@@ -72,13 +69,13 @@
     @apply w-full;
   }
 
-  /* Brand color utilities - uses colors from Store.metadata.brand */
+  /* Brand color utilities */
   .btn-brand-primary {
     background-color: var(--brand-primary, hsl(var(--primary)));
     color: white;
   }
   .btn-brand-primary:hover {
-    opacity: 0.9;
+    opacity: 0.88;
   }
 
   .text-brand-primary {
@@ -100,6 +97,26 @@
   .bg-brand-secondary {
     background-color: var(--brand-secondary, hsl(var(--accent)));
   }
+
+  /* Sage green utility */
+  .bg-sage {
+    background-color: hsl(140 22% 36%);
+  }
+  .text-sage {
+    color: hsl(140 22% 36%);
+  }
+  .border-sage {
+    border-color: hsl(140 22% 36%);
+  }
+  .bg-sage-light {
+    background-color: hsl(140 18% 94%);
+  }
+  .bg-terracotta {
+    background-color: hsl(16 45% 56%);
+  }
+  .bg-cream-dark {
+    background-color: hsl(40 25% 90%);
+  }
 }
 
 /* Smooth scrolling */
@@ -109,7 +126,8 @@ html {
 
 /* Selection color */
 ::selection {
-  @apply bg-accent/20 text-foreground;
+  background-color: hsl(140 22% 36% / 0.15);
+  color: hsl(30 15% 12%);
 }
 
 /* Focus styles */
@@ -119,16 +137,28 @@ html {
 
 /* Cookie consent animation */
 @keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(1rem);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(1rem); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out;
+  animation: fade-in 0.4s ease-out;
+}
+
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out both;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s ease-in-out infinite;
 }
