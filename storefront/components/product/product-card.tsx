@@ -20,26 +20,32 @@ export default function ProductCard({ product, variantExtensions }: ProductCardP
 
   return (
     <Link href={`/products/${product.handle}`} className="group block" prefetch={true}>
-      <div className="space-y-3">
-        {/* Product Image */}
-        <div className="relative aspect-[3/4] overflow-hidden bg-muted rounded-sm">
+      <div className="space-y-4">
+
+        {/* Image */}
+        <div className="relative aspect-[3/4] overflow-hidden bg-muted">
           <Image
             src={getProductImage(product.thumbnail, product.id)}
             alt={product.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className={`object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${soldOut ? 'opacity-50' : ''}`}
+            className={`object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04] ${soldOut ? 'opacity-40' : ''}`}
           />
           {soldOut && (
-            <div className="absolute top-2 left-2 bg-muted-foreground/80 text-white text-xs font-semibold uppercase tracking-wide px-2.5 py-1 rounded-sm">
-              Sold Out
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+              <span className="label-xs bg-background px-3 py-1.5 text-muted-foreground">
+                Sold Out
+              </span>
             </div>
           )}
         </div>
 
-        {/* Product Info */}
-        <div className="space-y-1">
-          <h3 className={`text-sm font-medium line-clamp-1 group-hover:underline underline-offset-4 transition-all ${soldOut ? 'text-muted-foreground' : ''}`}>
+        {/* Info */}
+        <div className="space-y-1.5 px-0.5">
+          <p className="label-xs text-muted-foreground">
+            {product.subtitle || 'Handmade Soap'}
+          </p>
+          <h3 className={`font-heading text-base font-normal tracking-[-0.01em] group-hover:opacity-60 transition-opacity ${soldOut ? 'text-muted-foreground' : ''}`}>
             {product.title}
           </h3>
           <ProductPrice
@@ -50,6 +56,7 @@ export default function ProductCard({ product, variantExtensions }: ProductCardP
             size="card"
           />
         </div>
+
       </div>
     </Link>
   )
