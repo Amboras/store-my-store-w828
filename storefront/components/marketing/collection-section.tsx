@@ -14,30 +14,34 @@ export default function CollectionSection({ collection, alternate }: CollectionS
   const hasDescription = typeof description === 'string' && description
 
   return (
-    <section className={`py-section ${alternate ? 'bg-muted/30' : ''}`}>
+    <section className={`py-section border-t border-border/40 ${alternate ? 'bg-muted/15' : ''}`}>
       <div className="container-custom">
-        <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 mb-10">
+
+        {/* Section header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-5 mb-14">
           <div>
-            <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">
-              Collection
-            </p>
-            <h2 className="text-h2 font-heading font-semibold">
+            <p className="label-xs text-foreground/35 mb-3">Collection</p>
+            <h2 className="font-heading text-[2rem] font-normal tracking-[-0.02em] leading-tight">
               {collection.title}
             </h2>
             {hasDescription && (
-              <p className="text-muted-foreground mt-2 max-w-lg">{description}</p>
+              <p className="text-[0.875rem] text-muted-foreground mt-3 max-w-[48ch] leading-[1.8]">
+                {description}
+              </p>
             )}
           </div>
           <Link
             href={`/collections/${collection.handle}`}
-            className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide link-underline pb-0.5 whitespace-nowrap"
+            className="inline-flex items-center gap-2 label-xs text-foreground link-underline pb-px whitespace-nowrap shrink-0"
             prefetch={true}
           >
             View All
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-2.5 w-2.5" strokeWidth={1.5} />
           </Link>
         </div>
+
         <ProductGrid collectionId={collection.id} limit={4} />
+
       </div>
     </section>
   )

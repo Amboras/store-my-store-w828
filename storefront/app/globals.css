@@ -4,173 +4,149 @@
 
 @layer base {
   :root {
-    /* Aesop-inspired: deep stone, warm parchment, olive */
-    --background: 38 28% 96%;          /* warm parchment */
-    --foreground: 24 12% 10%;          /* near-black warm charcoal */
-    --muted: 36 18% 91%;               /* subtle warm stone */
-    --muted-foreground: 24 8% 44%;     /* warm grey */
-    --accent: 82 16% 32%;              /* olive-sage */
-    --accent-foreground: 0 0% 100%;
-    --border: 36 12% 84%;              /* refined warm border */
-    --ring: 82 16% 32%;
-    --primary: 24 12% 10%;
-    --primary-foreground: 38 28% 96%;
-    --destructive: 0 72% 51%;
+    /* ── Palette: warm parchment, deep stone charcoal, olive ── */
+    --background:        40 22% 97%;   /* near-white parchment */
+    --foreground:        25 14%  9%;   /* deep warm charcoal */
+    --muted:             38 16% 92%;   /* very light stone */
+    --muted-foreground:  25  8% 46%;   /* warm mid-grey */
+    --accent:            83 14% 34%;   /* deep olive-sage */
+    --accent-foreground: 0   0% 100%;
+    --border:            36 10% 86%;   /* hairline warm border */
+    --ring:              83 14% 34%;
+    --primary:           25 14%  9%;
+    --primary-foreground:40 22% 97%;
+    --destructive:        0 72% 51%;
     --destructive-foreground: 0 0% 98%;
 
-    /* Olive / sage utilities */
-    --olive: 82 16% 32%;
-    --olive-light: 82 12% 94%;
-    --stone: 36 10% 56%;
-    --parchment: 38 28% 96%;
-    --charcoal: 24 12% 10%;
+    --olive:          83 14% 34%;
+    --olive-light:    83 10% 94%;
+    --stone:          36 10% 58%;
+    --parchment:      40 22% 97%;
+    --charcoal:       25 14%  9%;
   }
 
   .dark {
-    --background: 24 10% 7%;
-    --foreground: 36 18% 90%;
-    --muted: 24 8% 12%;
-    --muted-foreground: 36 8% 50%;
-    --accent: 82 16% 42%;
-    --accent-foreground: 0 0% 100%;
-    --border: 24 8% 16%;
-    --ring: 82 16% 42%;
-    --primary: 36 18% 90%;
-    --primary-foreground: 24 10% 7%;
-    --destructive: 0 72% 51%;
+    --background:        25 10%  7%;
+    --foreground:        36 16% 90%;
+    --muted:             25  8% 12%;
+    --muted-foreground:  36  6% 52%;
+    --accent:            83 14% 44%;
+    --accent-foreground: 0   0% 100%;
+    --border:            25  8% 16%;
+    --ring:              83 14% 44%;
+    --primary:           36 16% 90%;
+    --primary-foreground:25 10%  7%;
+    --destructive:        0 72% 51%;
     --destructive-foreground: 0 0% 98%;
   }
 }
 
 @layer base {
-  * {
-    border-color: hsl(var(--border));
-  }
+  * { border-color: hsl(var(--border)); }
 
   body {
     @apply bg-background text-foreground font-body antialiased;
-    font-feature-settings: 'kern' 1, 'liga' 1;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-heading;
-  }
-
-  /* Fine hairline borders, like Aesop */
-  hr {
-    @apply border-border;
-  }
+  h1, h2, h3, h4, h5, h6 { @apply font-heading; }
+  hr { @apply border-border; }
 }
 
 @layer utilities {
+  /* ── Layout ─────────────────────────────────────────────── */
   .container-custom {
     @apply mx-auto max-w-content px-6 sm:px-10 lg:px-16;
   }
 
-  .text-balance {
-    text-wrap: balance;
+  .text-balance { text-wrap: balance; }
+
+  /* ── Typography utilities ────────────────────────────────── */
+  .label-xs {
+    @apply text-[9.5px] uppercase tracking-[0.2em] font-medium font-body;
+    color: hsl(var(--muted-foreground));
   }
 
-  /* Aesop-style animated underline */
-  .link-underline {
-    @apply relative;
+  .label-sm {
+    @apply text-[11px] uppercase tracking-[0.16em] font-medium font-body;
   }
+
+  /* ── Decorative ──────────────────────────────────────────── */
+
+  /* Aesop-style thin animated underline on hover */
+  .link-underline { @apply relative; }
   .link-underline::after {
     content: '';
-    @apply absolute bottom-0 left-0 h-px w-0 bg-current transition-all duration-500;
+    @apply absolute bottom-0 left-0 h-px w-0 bg-current;
+    transition: width 0.55s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .link-underline:hover::after {
-    @apply w-full;
-  }
+  .link-underline:hover::after { @apply w-full; }
 
-  /* Brand utilities */
-  .btn-brand-primary {
-    background-color: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-  }
-  .btn-brand-primary:hover {
-    opacity: 0.82;
-  }
-
-  .text-brand-primary { color: hsl(var(--primary)); }
-  .text-brand-secondary { color: hsl(var(--accent)); }
-  .border-brand-primary { border-color: hsl(var(--primary)); }
-  .bg-brand-primary { background-color: hsl(var(--primary)); }
-  .bg-brand-secondary { background-color: hsl(var(--accent)); }
-
-  /* Olive / sage utilities */
-  .bg-olive { background-color: hsl(82 16% 32%); }
-  .text-olive { color: hsl(82 16% 32%); }
-  .border-olive { border-color: hsl(82 16% 32%); }
-  .bg-olive-light { background-color: hsl(82 12% 94%); }
-
-  /* Kept for backward compat */
-  .bg-sage { background-color: hsl(82 16% 32%); }
-  .text-sage { color: hsl(82 16% 32%); }
-  .border-sage { border-color: hsl(82 16% 32%); }
-  .bg-sage-light { background-color: hsl(82 12% 94%); }
-  .bg-terracotta { background-color: hsl(16 38% 54%); }
-  .bg-cream-dark { background-color: hsl(36 18% 91%); }
-
-  /* Aesop-style label style */
-  .label-xs {
-    @apply text-[10px] uppercase tracking-[0.18em] font-medium text-muted-foreground;
-  }
-
-  /* Luxury divider */
+  /* Luxury hairline divider */
   .divider-fine {
-    @apply w-8 h-px bg-foreground/30 my-4;
+    @apply h-px bg-foreground/20 my-5;
+    width: 2rem;
   }
+
+  /* Full-width fine rule */
+  .rule-fine {
+    @apply w-full h-px bg-border/70;
+  }
+
+  /* ── Brand colour helpers ─────────────────────────────── */
+  .bg-olive       { background-color: hsl(var(--olive)); }
+  .text-olive     { color: hsl(var(--olive)); }
+  .border-olive   { border-color: hsl(var(--olive)); }
+  .bg-olive-light { background-color: hsl(var(--olive-light)); }
+
+  /* backward compat */
+  .bg-sage        { background-color: hsl(var(--olive)); }
+  .text-sage      { color: hsl(var(--olive)); }
+  .border-sage    { border-color: hsl(var(--olive)); }
+  .bg-sage-light  { background-color: hsl(var(--olive-light)); }
 }
 
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
+/* ── Smooth scroll ───────────────────────────────────────── */
+html { scroll-behavior: smooth; }
 
-/* Refined selection color */
+/* ── Text selection ─────────────────────────────────────── */
 ::selection {
-  background-color: hsl(82 16% 32% / 0.12);
-  color: hsl(24 12% 10%);
+  background-color: hsl(83 14% 34% / 0.12);
+  color: hsl(25 14% 9%);
 }
 
-/* Focus styles */
+/* ── Focus ring ─────────────────────────────────────────── */
 :focus-visible {
   outline: 1px solid hsl(var(--ring));
   outline-offset: 3px;
 }
 
-/* Animations */
+/* ── Animations ─────────────────────────────────────────── */
 @keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
-.animate-fade-in {
-  animation: fade-in 0.6s ease-out;
-}
+.animate-fade-in { animation: fade-in 0.65s ease-out; }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(28px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0);    }
 }
 .animate-fade-in-up {
-  animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: fade-in-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @keyframes fade-in-slow {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
-.animate-fade-in-slow {
-  animation: fade-in-slow 1.2s ease-out both;
-}
+.animate-fade-in-slow { animation: fade-in-slow 1.4s ease-out both; }
 
-@keyframes pulse-soft {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(1.04); }
+  to   { opacity: 1; transform: scale(1);    }
 }
-.animate-pulse-soft {
-  animation: pulse-soft 2s ease-in-out infinite;
-}
+.animate-scale-in { animation: scale-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }

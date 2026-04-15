@@ -32,12 +32,12 @@ async function getProduct(handle: string) {
 
 async function getVariantExtensions(productId: string): Promise<Record<string, VariantExtension>> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'
-    const storeId = process.env.NEXT_PUBLIC_STORE_ID
+    const baseUrl        = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || 'http://localhost:9000'
+    const storeId        = process.env.NEXT_PUBLIC_STORE_ID
     const publishableKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
     const headers: Record<string, string> = {}
-    if (storeId) headers['X-Store-Environment-ID'] = storeId
-    if (publishableKey) headers['x-publishable-api-key'] = publishableKey
+    if (storeId)        headers['X-Store-Environment-ID'] = storeId
+    if (publishableKey) headers['x-publishable-api-key']  = publishableKey
 
     const res = await fetch(
       `${baseUrl}/store/product-extensions/products/${productId}/variants`,
@@ -49,9 +49,9 @@ async function getVariantExtensions(productId: string): Promise<Record<string, V
     const map: Record<string, VariantExtension> = {}
     for (const v of data.variants || []) {
       map[v.id] = {
-        compare_at_price: v.compare_at_price,
-        manage_inventory: v.manage_inventory ?? false,
-        inventory_quantity: v.inventory_quantity,
+        compare_at_price:    v.compare_at_price,
+        manage_inventory:    v.manage_inventory ?? false,
+        inventory_quantity:  v.inventory_quantity,
       }
     }
     return map
@@ -100,27 +100,40 @@ export default async function ProductPage({
 
   return (
     <>
-      {/* ── BREADCRUMB ─────────────────────────────────── */}
-      <div className="border-b border-border/40">
-        <div className="container-custom py-4">
-          <Link
-            href="/products"
-            className="inline-flex items-center gap-2 label-xs text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-3 w-3" strokeWidth={1.5} />
-            Back to Shop
-          </Link>
+      {/* ── ANALYTICS TRACKER ──────────────────────────────── */}
+      <ProductViewTracker
+        productId={product.id}
+        productTitle={product.title}
+        variantId={product.variants?.[0]?.id || null}
+        currency={product.variants?.[0]?.calculated_price?.currency_code || 'usd'}
+        value={product.variants?.[0]?.calculated_price?.calculated_amount ?? null}
+      />
+
+      {/* ── BREADCRUMB ─────────────────────────────────────── */}
+      <div className="border-b border-border/40 bg-background">
+        <div className="container-custom">
+          <div className="flex items-center h-12">
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-2 label-xs text-foreground/40 hover:text-foreground transition-colors duration-300"
+            >
+              <ArrowLeft className="h-2.5 w-2.5" strokeWidth={1.5} />
+              Shop
+            </Link>
+            <span className="mx-3 text-border/80 text-xs">·</span>
+            <span className="label-xs text-foreground/30 truncate max-w-[200px]">{product.title}</span>
+          </div>
         </div>
       </div>
 
-      {/* ── PRODUCT LAYOUT ─────────────────────────────── */}
-      <div className="container-custom py-12 lg:py-20">
-        <div className="grid lg:grid-cols-[1fr_1fr] gap-12 lg:gap-24">
+      {/* ── MAIN LAYOUT ─────────────────────────────────────── */}
+      <div className="container-custom py-14 lg:py-24">
+        <div className="grid lg:grid-cols-[1fr_1fr] gap-10 lg:gap-20 xl:gap-28">
 
-          {/* ── LEFT: Image Gallery ──────────────────────── */}
-          <div className="space-y-3">
-            {/* Primary image */}
-            <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+          {/* ── LEFT: Gallery ─────────────────────────────── */}
+          <div className="space-y-2.5">
+            {/* Primary */}
+            <div className="relative aspect-[4/5] overflow-hidden bg-muted">
               <Image
                 src={displayImages[0].url}
                 alt={product.title}
@@ -133,18 +146,18 @@ export default async function ProductPage({
 
             {/* Thumbnail strip */}
             {displayImages.length > 1 && (
-              <div className="grid grid-cols-4 gap-3">
-                {displayImages.slice(1, 5).map((image: any, idx: number) => (
+              <div className="grid grid-cols-4 gap-2.5">
+                {displayImages.slice(1, 5).map((img: any, idx: number) => (
                   <div
                     key={idx}
-                    className="relative aspect-[3/4] overflow-hidden bg-muted"
+                    className="relative aspect-[4/5] overflow-hidden bg-muted cursor-pointer"
                   >
                     <Image
-                      src={image.url}
-                      alt={`${product.title} ${idx + 2}`}
+                      src={img.url}
+                      alt={`${product.title} — view ${idx + 2}`}
                       fill
                       sizes="12vw"
-                      className="object-cover"
+                      className="object-cover hover:scale-[1.04] transition-transform duration-500"
                     />
                   </div>
                 ))}
@@ -152,53 +165,42 @@ export default async function ProductPage({
             )}
           </div>
 
-          {/* ── RIGHT: Product Info ──────────────────────── */}
-          <div className="lg:sticky lg:top-24 lg:self-start">
+          {/* ── RIGHT: Info ────────────────────────────────── */}
+          <div className="lg:sticky lg:top-28 lg:self-start space-y-0">
 
-            {/* Analytics tracker */}
-            <ProductViewTracker
-              productId={product.id}
-              productTitle={product.title}
-              variantId={product.variants?.[0]?.id || null}
-              currency={product.variants?.[0]?.calculated_price?.currency_code || 'usd'}
-              value={product.variants?.[0]?.calculated_price?.calculated_amount ?? null}
-            />
-
-            {/* Category / subtitle */}
-            <p className="label-xs text-muted-foreground mb-4">
+            {/* Kicker */}
+            <p className="label-xs text-foreground/35 mb-5">
               {product.subtitle || 'Handmade Botanical Soap'}
             </p>
 
             {/* Title */}
-            <h1 className="font-heading text-h1 font-normal leading-[1.12] tracking-[-0.02em] mb-6">
+            <h1 className="font-heading text-[2.25rem] lg:text-[2.75rem] font-normal leading-[1.08] tracking-[-0.025em] text-balance mb-7">
               {product.title}
             </h1>
 
-            {/* Thin rule */}
-            <div className="w-full h-px bg-border/60 mb-7" />
+            {/* Rule */}
+            <div className="rule-fine mb-8" />
 
-            {/* Variant selector + price + add to cart */}
+            {/* Variant picker + price + add-to-cart */}
             <ProductActions product={product} variantExtensions={variantExtensions} />
 
-            {/* Trust strip — refined, Aesop-style */}
-            <div className="mt-8 pt-8 border-t border-border/40">
-              <div className="space-y-4">
-                {[
-                  { label: 'Complimentary shipping on orders over €45' },
-                  { label: '30-day returns — no questions asked' },
-                  { label: 'Plastic-free, zero-waste packaging' },
-                  { label: 'Vegan & cruelty-free, certified organic' },
-                ].map(({ label }) => (
-                  <div key={label} className="flex items-center gap-3">
-                    <div className="h-px w-4 bg-muted-foreground/40 flex-shrink-0" />
-                    <p className="text-caption text-muted-foreground">{label}</p>
-                  </div>
-                ))}
-              </div>
+            {/* Trust details */}
+            <div className="mt-9 pt-9 border-t border-border/40 space-y-3.5">
+              {[
+                'Complimentary shipping across Europe on orders over €45',
+                '30-day returns — no questions asked',
+                'Plastic-free, zero-waste packaging',
+                'Vegan & cruelty-free, certified organic',
+              ].map((line) => (
+                <div key={line} className="flex items-start gap-3.5">
+                  <div className="mt-[7px] h-px w-3.5 bg-foreground/20 flex-shrink-0" />
+                  <p className="text-[0.8rem] text-muted-foreground leading-[1.75]">{line}</p>
+                </div>
+              ))}
             </div>
 
             {/* Accordion */}
-            <div className="mt-8">
+            <div className="mt-9 border-t border-border/40">
               <ProductAccordion
                 description={product.description}
                 details={product.metadata as Record<string, string> | undefined}
@@ -209,21 +211,37 @@ export default async function ProductPage({
         </div>
       </div>
 
-      {/* ── INGREDIENTS CALLOUT ────────────────────────── */}
-      <section className="border-t border-border/40 py-16 bg-muted/20">
-        <div className="container-custom text-center max-w-xl mx-auto">
-          <p className="label-xs text-muted-foreground mb-3">Formulation Principle</p>
-          <h2 className="font-heading text-h3 font-normal leading-relaxed text-balance">
-            Every ingredient has a reason to be here. Nothing more. Nothing less.
-          </h2>
-          <div className="divider-fine mx-auto mt-6" />
-          <div className="mt-8">
-            <Link
-              href="/about"
-              className="label-xs text-muted-foreground hover:text-foreground transition-colors link-underline pb-0.5"
-            >
-              Learn About Our Process
-            </Link>
+      {/* ── FORMULATION PHILOSOPHY ─────────────────────────── */}
+      <section className="border-t border-border/40 py-20 bg-muted/15">
+        <div className="container-custom">
+          <div className="grid lg:grid-cols-[1fr_2px_1fr] gap-0 items-start max-w-4xl mx-auto">
+
+            {/* Left text */}
+            <div className="text-center lg:text-right lg:pr-16 pb-10 lg:pb-0">
+              <p className="label-xs text-foreground/35 mb-4">Formulation Principle</p>
+              <p className="font-heading text-[1.5rem] font-normal leading-[1.35] tracking-[-0.015em] text-balance">
+                Every ingredient has a reason to be here.
+              </p>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden lg:block w-px bg-border/60 self-stretch mx-auto" />
+
+            {/* Right text */}
+            <div className="text-center lg:text-left lg:pl-16 pt-10 lg:pt-0 border-t lg:border-t-0 border-border/40">
+              <p className="text-[0.875rem] text-muted-foreground leading-[1.9] mb-5">
+                We believe in full transparency. Every ingredient listed on our products
+                is there for a specific, proven purpose. Nothing is added for appearance
+                or to cut costs.
+              </p>
+              <Link
+                href="/about"
+                className="label-xs text-foreground link-underline pb-px"
+              >
+                Learn About Our Process
+              </Link>
+            </div>
+
           </div>
         </div>
       </section>
